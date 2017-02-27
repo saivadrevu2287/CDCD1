@@ -16,7 +16,7 @@ parameters:
     description: "Image to use to boot the servers"
     type: string
   server_keypair: 
-    default: KeyPairOS1
+    default: KeyPair1
     description: "Please create the keypair before launching this stack"
     label: "Keypair to set for the servers"
     type: string
