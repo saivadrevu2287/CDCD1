@@ -1,0 +1,57 @@
+heat_template_version: 2013-05-23
+description: Simple template to deploy a two compute instances
+
+parameters:
+  private_network: 
+    default: Private
+    description: "Private network address (e.g. 192.168.0.0/24)"
+    label: "Private network address"
+    type: string 
+  server_flavor: 
+    default: standard.4
+    description: "Flavor of the servers"
+    type: string
+  server_image: 
+    default: "Ubuntu 14.04.2 LTS"
+    description: "Image to use to boot the servers"
+    type: string
+  server_keypair: 
+    default: KeyPair1
+    description: "Please create the keypair before launching this stack"
+    label: "Keypair to set for the servers"
+    type: string
+resources:
+   my_web_instance:
+     type: OS::Nova::Server
+     properties:
+       key_name: { get_param: server_keypair }
+       image: { get_param: server_image }
+       flavor: { get_param: server_flavor }
+       networks: 
+        - network: { get_param: private_network }	
+   web_floating_IP:
+     type: OS::Nova::FloatingIP
+     properties:
+       pool: ext-net
+   web_floating_IP_att:
+     type: OS::Nova::FloatingIPAssociation
+     properties:
+       floating_ip: {get_resource: web_floating_IP}
+       server_id: {get_resource: my_web_instance}
+   my_DB_instance:
+     type: OS::Nova::Server
+     properties:
+       key_name: { get_param: server_keypair }
+       image: { get_param: server_image }
+       flavor: { get_param: server_flavor }
+       networks: 
+        - network: { get_param: private_network }	
+   DB_Volume: 
+    type: OS::Cinder::Volume
+    properties:
+      size: 10
+   DB_Volume_att:
+     type: OS::Cinder::VolumeAttachment
+     properties:
+       instance_uuid: { get_resource: my_DB_instance }
+       volume_id: { get_resource: DB_Volume}
