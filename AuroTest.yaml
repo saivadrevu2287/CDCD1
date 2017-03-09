@@ -1,0 +1,31 @@
+heat_template_version: '2014-10-16'
+description: 'Simple template to deploy a single compute instance'
+parameters:
+  key_name:
+    type: string
+    label: id_rsa_pub
+    description: 'key pair'
+    default: id_rsa_pub
+  image_id:
+    type: string
+    label: 'Image ID'
+    description: 'Image to be used for compute instance'
+    default: 0376ff88-2e12-4ab6-870a-91e285d6554e
+  instance_type:
+    type: string
+    label: Flavor
+    default: standard.1
+resources:
+  auro_heat:
+    type: 'OS::Nova::Server'
+    properties:
+      admin_user: ubuntu
+      key_name:
+        get_param: key_name
+      image:
+        get_param: image_id
+      flavor:
+        get_param: instance_type
+      networks:
+        -
+          network: b5197f34-fb54-46c2-af35-bac164ea904d
