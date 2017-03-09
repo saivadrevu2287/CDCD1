@@ -1,0 +1,9 @@
+{
+            "files": [
+                    {
+                        "pattern": "jenkins-pipeline-example/resources/test.txt",
+                        "target": "libs-snapshot-local",
+                        "props": "p1=v1;p2=v2"
+                    }
+                ]
+            }
