@@ -33,26 +33,9 @@ node {
 	    
 		stage 'Package Verify'
 		// Create the upload spec.
-		def uploadSpec1 = """{
-            "files": [
-                    {
-                        "pattern": "jenkins-pipeline-example/resources/test.txt",
-                        "target": "libs-snapshot-local",
-                        "props": "p1=v1;p2=v2"
-                    }
-                ]
-            }"""
+	  def uploadSpec1 = readFile 'jenkins-pipeline/resources/artifact-upload.json'
 		// Create the download spec.
-		def downloadSpec1 = """{
-            "files": [
-                    {
-                        "pattern": "libs-snapshot-local/*(ABC).zip",
-							"target": "svadrevu/",
-							"props": "p1=v1;p2=v2"
-						}
-					   ]
-				  }"""
-
+	  def downloadSpec1 = readFile 'jenkins-pipeline/resources/artifact-download.json'
         
         sh 'rm /var/lib/jenkins/workspace/E2EWorkflow/svadrevu/ABC.zip'
 
