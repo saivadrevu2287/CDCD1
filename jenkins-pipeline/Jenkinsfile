@@ -10,7 +10,7 @@ node {
 	boolean bArtifactory = false;
 	
 
-	stage "Build"
+	stage "Retrieve Package"
 
 	def uploadSpec_heatTemplate = readFile 'AuroTest.yaml'
 	String md5 = 'c45a8c30f9c5bdb4bc7136acc882ad1'
@@ -31,7 +31,7 @@ node {
 	if(bGIT == true)
 	{
 	    
-		stage 'Package Verify'
+		stage 'Validate Package'
 		// Create the upload spec.
 	  def uploadSpec1 = readFile 'jenkins-pipeline/resources/artifact-upload.json'
 		// Create the download spec.
@@ -73,7 +73,7 @@ node {
 
 	if(bArtifactory == true){
 
-		stage 'Heat Deployment'
+		stage 'Direct Instantiation'
 		
 		sh '/cicd/heat_deploy.sh'
 
@@ -84,7 +84,7 @@ node {
 
 	}
 	
-	stage 'Smoke Test'
+	stage 'Test Instantiation'
 	
 	println "Performing Smoke Test"
 
