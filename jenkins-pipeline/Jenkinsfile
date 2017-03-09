@@ -15,7 +15,8 @@ node {
 	println "....1........"
 	def uploadSpec_heatTemplate = readFile 'AuroTest.yaml'
 	println "....2........"
-	String md5 = 'c45a8c30f9c5bdb4bc7136acc882ad1'
+	def md5 = "c45a8c30f9c5bdb4bc7136acc882ad1"
+	println "....3........"
 	def digest = MessageDigest.getInstance("MD5")
 	digest.update(uploadSpec_heatTemplate.getBytes())
 	BigInteger hash = new BigInteger(1, digest.digest());
@@ -28,6 +29,7 @@ node {
 	// Release the non serializable objects
 	digest = null;
 	uploadSpec_heatTemplate = null;
+	md5 = null;
 
 
 	if(bGIT == true)
