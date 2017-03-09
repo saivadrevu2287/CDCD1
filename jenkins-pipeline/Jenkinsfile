@@ -16,12 +16,12 @@ node {
 	def uploadSpec_heatTemplate = readFile 'AuroTest.yaml'
 	println "....2........"
 	String md5 = "c45a8c30f9c5bdb4bc7136acc882ad1"
-	println "....3........"
-	def digest = MessageDigest.getInstance("MD5")
+	println "....3........" + md5
+	//def digest = MessageDigest.getInstance("MD5")
 	println "....4........"
-	digest.update(uploadSpec_heatTemplate.getBytes());
+	def digest = MessageDigest.getInstance("MD5").update(uploadSpec_heatTemplate.getBytes());
 	println "....5........"
-	BigInteger hash = new BigInteger(1, digest.digest());
+	BigInteger hash = new BigInteger(1, digest.digest().toString(16).padLeft(32, '0'));
 	println "....6........"
 	String hashFromContent = hash.toString(16);
 	println "....7........"
