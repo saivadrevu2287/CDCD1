@@ -11,8 +11,10 @@ node {
 	
 
 	stage "Retrieve Package"
-
+	
+	println "....1........"
 	def uploadSpec_heatTemplate = readFile 'AuroTest.yaml'
+	println "....2........"
 	String md5 = 'c45a8c30f9c5bdb4bc7136acc882ad1'
 	def digest = MessageDigest.getInstance("MD5")
 	digest.update(uploadSpec_heatTemplate.getBytes())
