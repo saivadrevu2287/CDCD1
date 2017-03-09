@@ -1,0 +1,108 @@
+import java.security.*;
+import java.io.*
+
+node {
+
+	def mvnHome = tool 'M3'
+	git url: 'https://github.com/saivadrevu2287/CDCD1.git'
+	def server = Artifactory.server 'Artifactory'
+	boolean bGIT = false;
+	boolean bArtifactory = false;
+	
+
+	stage "Build"
+
+	def uploadSpec_heatTemplate = readFile 'AuroTest.yaml'
+	String md5 = 'c45a8c30f9c5bdb4bc7136acc882ad1'
+	def digest = MessageDigest.getInstance("MD5")
+	digest.update(uploadSpec_heatTemplate.getBytes())
+	BigInteger hash = new BigInteger(1, digest.digest());
+	String hashFromContent = hash.toString(16);
+	println "hashFromGIT: " +hashFromContent
+	if(hashFromContent == md5) {
+		bGIT = true;
+		println "GIT File matched ............"
+	}
+	// Release the non serializable objects
+	digest = null;
+	uploadSpec_heatTemplate = null;
+
+
+	if(bGIT == true)
+	{
+	    
+		stage 'Package Verify'
+		// Create the upload spec.
+		def uploadSpec1 = """{
+            "files": [
+                    {
+                        "pattern": "jenkins-pipeline-example/resources/test.txt",
+                        "target": "libs-snapshot-local",
+                        "props": "p1=v1;p2=v2"
+                    }
+                ]
+            }"""
+		// Create the download spec.
+		def downloadSpec1 = """{
+            "files": [
+                    {
+                        "pattern": "libs-snapshot-local/*(ABC).zip",
+							"target": "svadrevu/",
+							"props": "p1=v1;p2=v2"
+						}
+					   ]
+				  }"""
+
+        
+        sh 'rm /var/lib/jenkins/workspace/E2EWorkflow/svadrevu/ABC.zip'
+
+		// Upload to Artifactory.
+		def buildInfo1 = server.upload spec: uploadSpec1
+		// Download from Artifactory.
+		def buildInfo2 = server.download spec: downloadSpec1
+		// Publish the build to Artifactory
+		server.publishBuildInfo buildInfo2
+		//Getting MD5 hash value of the downloade file...
+		String md5_Artifactory = '8f578de5379209ad199d71071992e111'
+		def downloadSpecFile_Artifactory = readFile 'svadrevu/ABC.zip'
+		def digest1 = MessageDigest.getInstance("MD5")
+		digest1.update(downloadSpecFile_Artifactory.getBytes())
+		BigInteger hash1 = new BigInteger(1, digest1.digest());
+		String hashFromArtifactory = hash1.toString(16);
+		println "hashFromArtifactory: " + hashFromArtifactory
+		if(hashFromArtifactory == md5_Artifactory)
+		{
+			bArtifactory = true;
+			println "Artifactory file matched..................."
+		}
+
+		uploadSpec1 = null;
+		downloadSpec1 = null;
+		buildInfo1 = null;
+		buildInfo2 = null;
+		downloadSpecFile_Artifactory = null;
+		digest1 = null;
+	}else {
+
+		println "GIT File MD5 did not match and not executing the Package Verify Phase.";
+
+	}
+
+	if(bArtifactory == true){
+
+		stage 'Heat Deployment'
+		
+		sh '/cicd/heat_deploy.sh'
+
+
+	}else {
+
+		println "Artifactory File MD5 did not match and not executing the HEAT Deploy Phase.";
+
+	}
+	
+	stage 'Smoke Test'
+	
+	println "Performing Smoke Test"
+
+}
