@@ -18,7 +18,7 @@ parameters:
   server_keypair: 
     default: KeyPair_Manual
     description: "Please create the keypair before launching this stack"
-    label: "KeyPair_Manual"
+    label: "id_rsa_pub"
     type: string
 resources:
    my_web_instance:
