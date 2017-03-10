@@ -29,3 +29,8 @@ resources:
       networks:
         -
           network: b5197f34-fb54-46c2-af35-bac164ea904d
+          
+outputs:
+  server_networks:
+    description: The networks of the deployed server
+    value: { get_attr: [auro_heat, networks] }
