@@ -3,9 +3,9 @@ description: 'Simple template to deploy a single compute instance'
 parameters:
   key_name:
     type: string
-    label: KeyPair1
+    label: id_rsa_pub
     description: 'key pair'
-    default: KeyPair1
+    default: id_rsa_pub
   image_id:
     type: string
     label: 'Image ID'
